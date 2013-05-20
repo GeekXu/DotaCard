@@ -1,0 +1,110 @@
+<html>
+<head>
+
+<script type = "text/javascript" src= "static/js/jquery-1.8.0.min.js"></script>
+<script src="static/js/socket.io.js"></script>
+<script src="static/js/pomeloclient.js"></script>
+<script type = "text/javascript" >
+
+var pomelo=window.pomelo;
+
+$(document).ready(function(){
+	$("#login").click(function(){
+	 var username = $('#username').val();
+	 var password = $('#password').val();
+	 var room=$('#room').val();
+
+	 var uidV=document.getElementById("username").value;
+	 var roomV=document.getElementById("room").value;
+	 
+	 
+	 $.get("/game/login/", {username : username, password : password}, function(d) {
+		if (d.result == "SUCCESS"||d.result=='FAIL'){
+			document.cookie = 'username='+username;
+			document.cookie = 'room='+room;
+			
+
+			queryEntry(uidV, function(host, port) {
+				pomelo.init({
+					host: host,
+					port: port,
+					log: true
+				}, function() {
+					var route = "connector.entryHandler.enter";
+					pomelo.request(route, {
+						uid: uidV,
+						room: roomV
+					}, function(data) {
+							if(data.error) {
+								//showError(DUPLICATE_ERROR);
+								alert("uid error");
+								return;
+							}
+							else{
+								alert('Pomelo Connect Success.'+data.users.length);
+								document.cookie='order='+data.users.length;
+								document.cookie = 'myCharacterID='+(data.users.length-1);
+								document.cookie = 'otherCharacterID='+(2-data.users.length);
+								//window.location.replace('index.html');
+							}
+							//alert('Pomelo Connect Success.');
+							//this.UpdateCards();
+					});
+				});
+			});
+			pomelo.on('onBothReady', function(data) {
+            	//jump to game page
+            	//alert('start');
+            	//document.cookie = "pomelo="+JSON.stringify(pomelo);
+            	window.location.href='onready/';
+            	//window.open("index.html");
+            	
+        	});
+		} else alert("Error.");
+	 });
+	});
+});
+
+function queryEntry(uid, callback) {
+    var route = 'gate.gateHandler.queryEntry';
+    console.log('1');
+    pomelo.init({
+        host: '127.0.0.1',
+        port: 3014,
+        log: true
+    }, function() {
+        pomelo.request(route, {
+            uid: uid
+        }, function(data) {
+            pomelo.disconnect();
+            if(data.code === 500) {
+                showError(LOGIN_ERROR);
+                return;
+            }
+            callback(data.host, data.port);
+        });
+    });
+};
+
+</script>
+<head/>
+
+<body>
+Username: 
+<input type = "text" id = "username" />
+<br />
+Password: 
+<input type = "text" id = "password" />
+<br />
+Room:
+<input type = "text" id = "room" />
+
+<button  id = "login" />Login </button>
+
+
+<form action = "/game/register_page/" >
+<input type = "submit" value = "register"/>
+</form>
+
+</body>
+</html>

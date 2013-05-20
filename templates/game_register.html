@@ -1,0 +1,54 @@
+
+<html>
+<head>
+<script type="text/javascript">
+function validate_required(field,alarttxt)
+{
+	alert("!23")
+	with (field)
+	{
+		if (value == null||value =="")
+		{alert(alerttxt);return false}
+		else {return true}
+	}
+}
+function validate_form(thisform)
+{
+	alert("!23")
+	with(thisform)
+	{
+		if (validate_required(username,"Username must be filled out!") == false)
+		{username.focus();return false}
+		if (validate_required(password,"Password must be filled out!") == false)
+		{password.focus();return false}
+		if (validate_required(repassword,"Repeat password must be filled out!") == false)
+		{repassword.focus();return false}
+		if (validate_required(email,"email must be filled out!") == false)
+		{email.focus();return false}
+		if (password != repassword)
+		{alert("The repeat password is diffirent");return false}
+		else {return true}
+	}
+}
+
+</script>
+</head>
+<body>
+<h1>Create an account</h1>
+<form  action = "" onsubmit="return validate_form(this)" method = "get">
+Username       : 
+<input type = "text" name = "username" />
+<br />
+Password       :      
+<input type = "text" name = "password" />
+<br />
+Repeat password:
+<input type = "text" name = "repassword" />
+<br />
+Email          :
+<input type = "text" name = "email" />
+<br />
+<input type = "submit" value = "register" />
+</form>
+</body>
+</html>
